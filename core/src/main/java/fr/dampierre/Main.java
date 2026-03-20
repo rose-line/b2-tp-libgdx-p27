@@ -13,6 +13,7 @@ public class Main extends ApplicationAdapter {
   private Texture image;
   private int playerX = 0;
   private int playerY = 0;
+  private int playerSize = 30;
 
   /**
    * La méthode `create()` est appelée UNE SEULE FOIS lorsque l'application
@@ -69,7 +70,18 @@ public class Main extends ApplicationAdapter {
   // Mise à jour de l'état du jeu (déplacer les objets du jeu, vérifier les
   // collisions, vérifier les conditions de victoire/défaite...)
   private void updateGameState() {
-    // ...
+    if (playerX < 0) {
+      playerX = 0;
+    }
+    if (playerX > Gdx.graphics.getWidth() - playerSize) {
+      playerX = Gdx.graphics.getWidth() - playerSize;
+    }
+    if (playerY < 0) {
+      playerY = 0;
+    }
+    if (playerY > Gdx.graphics.getHeight() - playerSize) {
+      playerY = Gdx.graphics.getHeight() - playerSize;
+    }
   }
 
   // Rendu (dessiner finalement l'état actuel du jeu, qui prend en compte les
@@ -77,7 +89,7 @@ public class Main extends ApplicationAdapter {
   private void renderGame() {
     ScreenUtils.clear(Color.BLACK);
     batch.begin();
-    batch.draw(image, playerX, playerY, 30, 30);
+    batch.draw(image, playerX, playerY, playerSize, playerSize);
     batch.end();
   }
 
