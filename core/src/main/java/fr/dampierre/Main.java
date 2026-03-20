@@ -10,10 +10,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Main extends ApplicationAdapter {
   private SpriteBatch batch;
-  private Texture image;
+  private Texture playerTxt;
   private int playerX = 0;
   private int playerY = 0;
   private int playerSize = 30;
+  private Texture enemyTxt;
 
   /**
    * La méthode `create()` est appelée UNE SEULE FOIS lorsque l'application
@@ -26,7 +27,8 @@ public class Main extends ApplicationAdapter {
   @Override
   public void create() {
     batch = new SpriteBatch();
-    image = new Texture("eddie.png");
+    playerTxt = new Texture("eddie.png");
+    enemyTxt = new Texture("bomb.png");
   }
 
   /**
@@ -87,9 +89,10 @@ public class Main extends ApplicationAdapter {
   // Rendu (dessiner finalement l'état actuel du jeu, qui prend en compte les
   // entrées et le changement d'état)
   private void renderGame() {
-    ScreenUtils.clear(Color.BLACK);
+    ScreenUtils.clear(Color.PINK);
     batch.begin();
-    batch.draw(image, playerX, playerY, playerSize, playerSize);
+    batch.draw(playerTxt, playerX, playerY, playerSize, playerSize);
+    batch.draw(enemyTxt, 100, 100, playerSize, playerSize);
     batch.end();
   }
 
@@ -102,6 +105,6 @@ public class Main extends ApplicationAdapter {
   @Override
   public void dispose() {
     batch.dispose();
-    image.dispose();
+    playerTxt.dispose();
   }
 }
