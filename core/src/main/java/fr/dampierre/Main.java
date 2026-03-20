@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Main extends ApplicationAdapter {
@@ -15,6 +16,8 @@ public class Main extends ApplicationAdapter {
   private int playerY = 0;
   private int playerSize = 30;
   private Texture enemyTxt;
+  private Texture explosionTxt;
+  private boolean collisionDetected = false;
 
   /**
    * La méthode `create()` est appelée UNE SEULE FOIS lorsque l'application
@@ -29,6 +32,7 @@ public class Main extends ApplicationAdapter {
     batch = new SpriteBatch();
     playerTxt = new Texture("eddie.png");
     enemyTxt = new Texture("bomb.png");
+    explosionTxt = new Texture("explosion.png");
   }
 
   /**
@@ -72,6 +76,7 @@ public class Main extends ApplicationAdapter {
   // Mise à jour de l'état du jeu (déplacer les objets du jeu, vérifier les
   // collisions, vérifier les conditions de victoire/défaite...)
   private void updateGameState() {
+    // Empêcher le joueur de sortir de l'écran
     if (playerX < 0) {
       playerX = 0;
     }
@@ -84,6 +89,23 @@ public class Main extends ApplicationAdapter {
     if (playerY > Gdx.graphics.getHeight() - playerSize) {
       playerY = Gdx.graphics.getHeight() - playerSize;
     }
+
+    // Gestion de collision simple entre le joueur et l'ennemi
+    Rectangle playerBox = getPlayerBox(); // obtenir la "box" du joueur
+    Rectangle enemyBox = getEnemyBox(); // obtenir la "box" de l'obstacle
+    if (playerBox.overlaps(enemyBox)) { // elles se chevauchent ?
+      // Collision détectée
+      System.out.println("Collision détectée !");
+      collisionDetected = true;
+    }
+  }
+
+  private Rectangle getPlayerBox() {
+    return new Rectangle(playerX, playerY, playerSize, playerSize);
+  }
+
+  private Rectangle getEnemyBox() {
+    return new Rectangle(100, 100, playerSize, playerSize);
   }
 
   // Rendu (dessiner finalement l'état actuel du jeu, qui prend en compte les
@@ -91,8 +113,12 @@ public class Main extends ApplicationAdapter {
   private void renderGame() {
     ScreenUtils.clear(Color.PINK);
     batch.begin();
-    batch.draw(playerTxt, playerX, playerY, playerSize, playerSize);
-    batch.draw(enemyTxt, 100, 100, playerSize, playerSize);
+    if (collisionDetected) {
+      batch.draw(explosionTxt, playerX, playerY, playerSize, playerSize);
+    } else {
+      batch.draw(playerTxt, playerX, playerY, playerSize, playerSize);
+      batch.draw(enemyTxt, 100, 100, playerSize, playerSize);
+    }
     batch.end();
   }
 
