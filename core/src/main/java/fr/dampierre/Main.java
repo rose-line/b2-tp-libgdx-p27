@@ -16,12 +16,7 @@ public class Main extends ApplicationAdapter {
   private int playerX = 0;
   private int playerY = 0;
   private int playerSize = 30;
-  private Texture enemyTxt;
-  private int enemyX = 100;
-  private int enemyY = 100;
-  private int enemySpeed = 1;
-  private Vector2 enemyDirection = new Vector2(1, 1);
-  private int enemySize = 30;
+  private Enemy enemy;
   private Texture explosionTxt;
   private boolean collisionDetected = false;
 
@@ -96,23 +91,12 @@ public class Main extends ApplicationAdapter {
       playerY = Gdx.graphics.getHeight() - playerSize;
     }
 
-    // Déplacer l'ennemi en fonction de la direction enemyDirection
-    enemyX += enemyDirection.x * enemySpeed;
-    enemyY += enemyDirection.y * enemySpeed;
-
-    // Faire rebondir l'ennemi sur les bords de l'écran
-    if (enemyX < 0 || enemyX > Gdx.graphics.getWidth() - enemySize) {
-      enemyDirection.x = -enemyDirection.x; // inverser la direction horizontale
-      enemySpeed += 1.0f; // augmenter la vitesse à chaque rebond
-    }
-    if (enemyY < 0 || enemyY > Gdx.graphics.getHeight() - enemySize) {
-      enemyDirection.y = -enemyDirection.y; // inverser la direction vertical
-      enemySpeed += 1.0f; // augmenter la vitesse à chaque rebond
-    }
+    enemy.move();
+    enemy.bound();
 
     // Gestion de collision simple entre le joueur et l'ennemi
     Rectangle playerBox = getPlayerBox(); // obtenir la "box" du joueur
-    Rectangle enemyBox = getEnemyBox(); // obtenir la "box" de l'obstacle
+    Rectangle enemyBox = enemy.getBox(); // obtenir la "box" de l'obstacle
     if (playerBox.overlaps(enemyBox)) { // elles se chevauchent ?
       // Collision détectée
       System.out.println("Collision détectée !");
@@ -124,10 +108,6 @@ public class Main extends ApplicationAdapter {
     return new Rectangle(playerX, playerY, playerSize, playerSize);
   }
 
-  private Rectangle getEnemyBox() {
-    return new Rectangle(enemyX, enemyY, playerSize, playerSize);
-  }
-
   // Rendu (dessiner finalement l'état actuel du jeu, qui prend en compte les
   // entrées et le changement d'état)
   private void renderGame() {
@@ -137,7 +117,7 @@ public class Main extends ApplicationAdapter {
       batch.draw(explosionTxt, playerX, playerY, playerSize, playerSize);
     } else {
       batch.draw(playerTxt, playerX, playerY, playerSize, playerSize);
-      batch.draw(enemyTxt, enemyX, enemyY, enemySize, enemySize);
+      enemy.draw(batch);
     }
     batch.end();
   }
