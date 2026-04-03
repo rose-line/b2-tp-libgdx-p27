@@ -5,10 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.Timer;
 
 public class Main extends ApplicationAdapter {
   private SpriteBatch batch;
@@ -19,6 +20,8 @@ public class Main extends ApplicationAdapter {
   private Enemy enemy;
   private Texture explosionTxt;
   private boolean collisionDetected = false;
+  private int score = 0;
+  public BitmapFont font;
 
   /**
    * La méthode `create()` est appelée UNE SEULE FOIS lorsque l'application
@@ -32,8 +35,19 @@ public class Main extends ApplicationAdapter {
   public void create() {
     batch = new SpriteBatch();
     playerTxt = new Texture("eddie.png");
-    enemyTxt = new Texture("bomb.png");
+    enemy = new Enemy("bomb.png");
     explosionTxt = new Texture("explosion.png");
+    font = new BitmapFont();
+    font.getData().setScale(2f); // taille x2
+    font.setColor(Color.YELLOW); // couleur
+
+    Timer.schedule(new Timer.Task() {
+      @Override
+      public void run() {
+        score += 1; // incrémenter le score à chaque exécution de la tâche
+        System.out.println("Score : " + score); // afficher le score dans la console
+      }
+    }, 0, 1);
   }
 
   /**
@@ -119,6 +133,7 @@ public class Main extends ApplicationAdapter {
       batch.draw(playerTxt, playerX, playerY, playerSize, playerSize);
       enemy.draw(batch);
     }
+    font.draw(batch, Integer.toString(score), 20, 40);
     batch.end();
   }
 
